@@ -150,7 +150,7 @@
 </div>
     <div class="featured-banner">
         <div class="featured-title">🥟 Chất lượng và Dinh dưỡng</div>
-        <div class="featured-subtitle">Nguyên liệu tươi xanh, Món ngon nhà nấu</div>
+        <div class="featured-subtitle">Nguyên liệu tươi, Món ngon nhà nấu</div>
     </div>
 	<div class="category-tabs">
         <button class="category-tab active" onclick="showCategory('all', this)">Tất cả</button>
@@ -827,6 +827,11 @@ const featuredBanner = document.querySelector('.featured-banner');
 if (featuredBanner) {
     featuredBanner.style.display = 'none';
 }
+           // Ẩn thanh điều hướng cuối trang (với !important)
+            const bottomNav = document.querySelector('.bottom-nav');
+            if (bottomNav) {
+                bottomNav.style.setProperty('display', 'none', 'important');
+            }
             const orderBtn = document.getElementById('onlineOrderBtn');
             if(orderBtn){
                 orderBtn.textContent = 'GỬI ĐẾN BẾP';
