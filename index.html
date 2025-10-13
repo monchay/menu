@@ -832,6 +832,11 @@ if (featuredBanner) {
             if (bottomNav) {
                 bottomNav.style.setProperty('display', 'none', 'important');
             }
+			// Đẩy cart-summary xuống sát mép dưới
+            const cartSummary = document.getElementById('cartSummary');
+            if (cartSummary) {
+                cartSummary.style.bottom = '10px'; // Thay vì 48px mặc định
+            }
             const orderBtn = document.getElementById('onlineOrderBtn');
             if(orderBtn){
                 orderBtn.textContent = 'GỬI ĐẾN BẾP';
