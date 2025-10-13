@@ -837,6 +837,16 @@ if (featuredBanner) {
             if (cartSummary) {
                 cartSummary.style.bottom = '5px'; 
             }
+			// Di chuyển chân giỏ hàng (cart-modal-footer) xuống dưới
+            const cartModalFooter = document.querySelector('.cart-modal-footer');
+            if (cartModalFooter) {
+                cartModalFooter.style.position = 'fixed';
+                cartModalFooter.style.bottom = '5px';
+                cartModalFooter.style.left = '0';
+                cartModalFooter.style.right = '0';
+                cartModalFooter.style.background = 'white'; // Thêm nền trắng để không bị trong suốt
+                cartModalFooter.style.padding = '10px 10px 5px 10px'; // Chỉnh lại padding cho đẹp hơn
+            }
             const orderBtn = document.getElementById('onlineOrderBtn');
             if(orderBtn){
                 orderBtn.textContent = 'GỬI ĐẾN BẾP';
