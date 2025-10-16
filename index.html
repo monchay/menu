@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QUÁN CHAY 6 NGON</title>
+    <title>QUÁN CHAY 6 LOAN</title>
     <meta name="theme-color" content="#02a046">
     <style id="critical-css">
         /* CSS QUAN TRỌNG - Tải ngay lập tức để hiển thị giao diện ban đầu */
@@ -59,7 +59,7 @@
             font-weight: 600;
         }
         .featured-banner {
-            background: linear-gradient(135deg, #02a046, #28a745);
+            background: linear-gradient(135deg, #02a046, #02a046);
             margin: 10px 6px;
             border-radius: 15px;
             padding: 10px;
@@ -145,7 +145,7 @@
     <div class="header-logo-container">
         <img src="https://i.postimg.cc/Sx3Vxx22/anhdaidien1.png" alt="Ảnh đại diện" class="logo-avatar">
         
-        <div class="header-title">QUÁN CHAY 6 NGOAN</div>
+        <div class="header-title">QUÁN CHAY 6 LOAN</div>
     </div>
 </div>
     <div class="featured-banner">
@@ -480,13 +480,13 @@
 
                 <div class="management-section" style="margin-top: 0;">
                     <details open id="adminShopInfoSection">
-                        <summary>QUÁN CHAY 6 NGON</summary>
+                        <summary>QUÁN CHAY 6 LOAN</summary>
                         <div class="details-content">
                             <div class="admin-shop-info-item" id="adminShopOpeningHours"><strong>Giờ mở cửa:</strong> Đang tải...</div>
-                            <div class="admin-shop-info-item"><strong>Địa chỉ:</strong> <span style="color: #02a046; font-weight: 600;">126/0 Lê Lợi, Xã Hóc Môn, Tp.HCM</span></div>
-                            <div class="admin-shop-info-item"><strong>Vị trí:</strong> <a href="https://maps.google.com/?q=126/0+Lê+Lợi,+Hóc+Môn" target="_blank">Xem trên Google Maps</a></div>
-                            <div class="admin-shop-info-item"><strong>Điện thoại:</strong> <a href="tel:0909112233">0909 112 233</a></div>
-                            <div class="admin-shop-info-item"><strong>Zalo:</strong> <a href="https://zalo.me/0909112233" target="_blank">Kết bạn Zalo</a></div>
+                            <div class="admin-shop-info-item"><strong>Địa chỉ:</strong> <span style="color: #02a046; font-weight: 600;">126/1 Lê Lợi, Xã Hóc Môn, Tp.HCM</span></div>
+                            <div class="admin-shop-info-item"><strong>Vị trí:</strong> <a href="https://maps.app.goo.gl/5Zj11dnbxh8NhFLC9", target="_blank">Xem trên Google Maps</a></div>
+                            <div class="admin-shop-info-item"><strong>Điện thoại:</strong> <a href="tel:0779957366">0779957366</a></div>
+                            <div class="admin-shop-info-item"><strong>Zalo:</strong> <a href="https://zalo.me/0763137082" target="_blank">Kết bạn Zalo</a></div>
                         </div>
                     </details>
                 </div>
@@ -572,7 +572,7 @@
                                         <div id="currentBreaks" style="margin-top: 8px; max-height: 15vh; overflow-y: auto;"></div>
                                     </div>
                                     <div style="margin-top: 10px; text-align: center;">
-                                        <button class="submit-btn" onclick="saveStoreHours()" style="width: 60%; background: #28a745;"> Cập nhật GIỜ HOẠT ĐỘNG </button>
+                                        <button class="submit-btn" onclick="saveStoreHours()" style="width: 60%; background: #02a046;"> Cập nhật GIỜ HOẠT ĐỘNG </button>
                                     </div>
                                 </div>
                             </details>
@@ -960,10 +960,10 @@ if (featuredBanner) {
             alert('Giỏ hàng trống!');
             return;
         }
-        document.getElementById('orderForm').classList.remove('show');
-        if (!isOfflineMode) {
-            document.getElementById('onlineOrderBtn').style.display = 'block';
-        }
+        document.getElementById('orderForm').classList.add('show'); // Sửa: Hiển thị form thông tin
+    if (!isOfflineMode) {
+        document.getElementById('onlineOrderBtn').style.display = 'none'; // Sửa: Ẩn nút "BẮT ĐẦU ĐẶT MÓN"
+    }
         updateCartModal();
         document.getElementById('cartModal').classList.add('show');
         document.body.style.overflow = 'hidden';
@@ -2395,7 +2395,7 @@ const statusClass = `status-${slugify(order.status || '')}`;
     .cart-item-image {
         width: 50px;
         height: 50px;
-        background: linear-gradient(135deg, #02a046, #28a745);
+        background: linear-gradient(135deg, #02a046, #02a046);
         border-radius: 10px;
         display: flex;
         align-items: center;
