@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QUÁN CHAY 6 LOAN</title>
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#02a046">
     <style id="critical-css">
         /* CSS QUAN TRỌNG - Tải ngay lập tức để hiển thị giao diện ban đầu */
@@ -369,7 +372,7 @@
                 <div class="order-buttons" id="orderButtons">
                     <button class="back-to-menu-btn" onclick="backToMenu()">← Đặt thêm món khác</button>
                     <div class="cart-total">
-                        <span>Tổng cộng: </span>
+                        <span>Tổng cộng:&nbsp; </span>
                         <span id="modalTotalPrice">0 </span>
                     </div>
                     <button class="order-btn" id="onlineOrderBtn" onclick="showOrderForm()">BẮT ĐẦU ĐẶT MÓN</button>
@@ -402,54 +405,55 @@
                                 <div class="custom-dropdown" id="wardDropdown">
                                     <div class="dropdown-group">
                                         <div class="dropdown-group-label">Huyện Hóc Môn</div>
-                                        <div class="dropdown-option" onclick="selectWard('Xã Đông Thạnh')">Xã Đông Thạnh</div>
-                                        <div class="dropdown-option" onclick="selectWard('Xã Hóc Môn')">Xã Hóc Môn (Xã Trung Chánh, TT Hóc Môn, Xã Tân Hiệp)</div>
-                                        <div class="dropdown-option" onclick="selectWard('Xã Xuân Thới Sơn')">Xã Xuân Thới Sơn</div>
-                                        <div class="dropdown-option" onclick="selectWard('Xã Bà Điểm')">Xã Bà Điểm</div>
+                                       
+                                        <div class="dropdown-option" onclick="selectWard('Xã Hóc Môn')">Xã Hóc Môn (TT Hóc Môn + Tân Xuân + Tân Hiệp)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Xã Xuân Thới Sơn')">Xã Xuân Thới Sơn (Tân Thới Nhì + Xuân Thới Đông + Xuân Thới Sơn)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Xã Đông Thạnh')">Xã Đông Thạnh (Thới Tam Thôn + Nhị Bình + Đông Thạnh)</div>
+										<div class="dropdown-option" onclick="selectWard('Xã Bà Điểm')">Xã Bà Điểm (Xuân Thới Thượng + Trung Chánh + Bà Điểm)</div>
                                     </div>
                                     <div class="dropdown-group">
                                         <div class="dropdown-group-label">Quận 12</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Đông Hưng Thuận')">Phường Đông Hưng Thuận</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Trung Mỹ Tây')">Phường Trung Mỹ Tây</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Tân Thới Hiệp')">Phường Tân Thới Hiệp</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Thới An')">Phường Thới An</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường An Phú Đông')">Phường An Phú Đông</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Đông Hưng Thuận')">Phường Đông Hưng Thuận (Tân Thới Nhất + Tân Hưng Thuận + Đông Hưng Thuận)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Trung Mỹ Tây')">Phường Trung Mỹ Tây (Trung Mỹ Tây + Tân Chánh Hiệp)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Tân Thới Hiệp')">Phường Tân Thới Hiệp (Hiệp Thành + Tân Thới Hiệp)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Thới An')">Phường Thới An (Thới An + Thạnh Xuân)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường An Phú Đông')">Phường An Phú Đông (An Phú Đông + Thạnh Lộc)</div>
                                     </div>
                                     <div class="dropdown-group">
                                         <div class="dropdown-group-label">Quận Gò Vấp</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Hạnh Thông')">Phường Hạnh Thông</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường An Nhơn')">Phường An Nhơn</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Gò Vấp')">Phường Gò Vấp (Phường 10, Phường 17)</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Thống Tây Hội')">Phường Thống Tây Hội</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường An Hội Tây')">Phường An Hội Tây</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường An Hội Đông')">Phường An Hội Đông</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Hạnh Thông')">Phường Hạnh Thông (P.1 + P.3)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường An Nhơn')">Phường An Nhơn (P.5 + P.6)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Gò Vấp')">Phường Gò Vấp (P.10 + P.17)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Thống Tây Hội')">Phường Thống Tây Hội (P8 + P.11)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường An Hội Tây')">Phường An Hội Tây (P.12 + P.14)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường An Hội Đông')">Phường An Hội Đông (P.15 + P.16)</div>
                                     </div>
                                     <div class="dropdown-group">
                                         <div class="dropdown-group-label">Quận Tân Bình</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Tân Sơn Hòa')">Phường Tân Sơn Hòa</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Tân Sơn Nhất')">Phường Tân Sơn Nhất</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Tân Hòa')">Phường Tân Hòa</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Bảy Hiền')">Phường Bảy Hiền</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Tân Bình')">Phường Tân Bình</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Tân Sơn')">Phường Tân Sơn</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Tân Sơn Hòa')">Phường Tân Sơn Hòa (P.1 + P.2 + P.3)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Tân Sơn Nhất')">Phường Tân Sơn Nhất (P.4 + P.5 + P.7)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Tân Hòa')">Phường Tân Hòa (P.6 + P.8 + P.9)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Bảy Hiền')">Phường Bảy Hiền (P.10 + P.11 + P.12)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Tân Bình')">Phường Tân Bình (P.13 + P.14 + 1 phần P.15)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Tân Sơn')">Phường Tân Sơn (Phần còn lại của Phường 15)</div>
                                     </div>
                                     <div class="dropdown-group">
                                         <div class="dropdown-group-label">Quận Tân Phú</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Tây Thạnh')">Phường Tây Thạnh</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Tân Sơn Nhì')">Phường Tân Sơn Nhì</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Phú Thọ Hòa')">Phường Phú Thọ Hòa</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Phú Thạnh')">Phường Phú Thạnh</div>
-                                        <div class="dropdown-option" onclick="selectWard('Phường Tân Phú')">Phường Tân Phú</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Tây Thạnh')">Phường Tây Thạnh (Tây Thạnh + một phần Sơn Kỳ)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Tân Sơn Nhì')">Phường Tân Sơn Nhì (Tân Sơn Nhì + 1 phần Sơn Kỳ + 1 phần Tân Quý + 1 phần Tân Thành)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Phú Thọ Hòa')">Phường Phú Thọ Hòa (Phú Thọ Hòa + 1 phần Tân Thành + 1 lại Tân Quý)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Phú Thạnh')">Phường Phú Thạnh (Hiệp Tân + Phú Thạnh + 1 phần Tân Thới Hòa)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Phường Tân Phú')">Phường Tân Phú (Phú Trung + Hòa Thạnh + 1 phần Tân Thới Hòa + 1 phần Tân Thành)</div>
                                     </div>
                                     <div class="dropdown-group">
                                         <div class="dropdown-group-label">Huyện Củ Chi</div>
-                                        <div class="dropdown-option" onclick="selectWard('Xã An Nhơn Tây')">Xã An Nhơn Tây</div>
-                                        <div class="dropdown-option" onclick="selectWard('Xã Thái Mỹ')">Xã Thái Mỹ</div>
-                                        <div class="dropdown-option" onclick="selectWard('Xã Nhuận Đức')">Xã Nhuận Đức</div>
-                                        <div class="dropdown-option" onclick="selectWard('Xã Tân An Hội')">Xã Tân An Hội</div>
-                                        <div class="dropdown-option" onclick="selectWard('Xã Củ Chi')">Xã Củ Chi</div>
-                                        <div class="dropdown-option" onclick="selectWard('Xã Phú Hòa Đông')">Xã Phú Hòa Đông</div>
-                                        <div class="dropdown-option" onclick="selectWard('Xã Bình Mỹ')">Xã Bình Mỹ</div>
+                                        <div class="dropdown-option" onclick="selectWard('Xã An Nhơn Tây')">Xã An Nhơn Tây (hú Mỹ Hưng + An Phú + An Nhơn Tây)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Xã Thái Mỹ')">Xã Thái Mỹ (Trung Lập Thượng + Phước Thạnh + Thái Mỹ)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Xã Nhuận Đức')">Xã Nhuận Đức (Phạm Văn Cội + Trung Lập Hạ + Nhuận Đức)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Xã Tân An Hội')">Xã Tân An Hội (Thị trấn Củ Chi + Phước Hiệp + Tân An Hội)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Xã Củ Chi')">Xã Củ Chi (Tân Phú Trung + Tân Thông Hội + Phước Vĩnh An)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Xã Phú Hòa Đông')">Xã Phú Hòa Đông (Tân Thạnh Tây + Tân Thạnh Đông + Phú Hòa Đông)</div>
+                                        <div class="dropdown-option" onclick="selectWard('Xã Bình Mỹ')">Xã Bình Mỹ (Bình Mỹ + Hòa Phú + Trung An)</div>
                                     </div>
                                 </div>
                             </div>
@@ -484,7 +488,7 @@
                         <div class="details-content">
                             <div class="admin-shop-info-item" id="adminShopOpeningHours"><strong>Giờ mở cửa:</strong> Đang tải...</div>
                             <div class="admin-shop-info-item"><strong>Địa chỉ:</strong> <span style="color: #02a046; font-weight: 600;">126/1 Lê Lợi, Xã Hóc Môn, Tp.HCM</span></div>
-                            <div class="admin-shop-info-item"><strong>Vị trí:</strong> <a href="https://maps.app.goo.gl/5Zj11dnbxh8NhFLC9", target="_blank">Xem trên Google Maps</a></div>
+                            <div class="admin-shop-info-item"><strong>Vị trí:</strong> <a href="https://share.google/V4UeWTN1GKdJRFruY" target="_blank">Xem trên Google Maps</a></div>
                             <div class="admin-shop-info-item"><strong>Điện thoại:</strong> <a href="tel:0779957366">0779957366</a></div>
                             <div class="admin-shop-info-item"><strong>Zalo:</strong> <a href="https://zalo.me/0763137082" target="_blank">Kết bạn Zalo</a></div>
                         </div>
@@ -670,7 +674,7 @@
         <div class="nav-text">Giỏ hàng</div>
     </div>
 
-    <div class="nav-item" onclick="window.location.href='tel:0909112233'">
+    <div class="nav-item" onclick="window.location.href='tel:0779957366'">
         <div class="nav-icon">📞</div>
         <div class="nav-text">Gọi điện</div>
     </div>
@@ -963,6 +967,7 @@ if (featuredBanner) {
         document.getElementById('orderForm').classList.add('show'); // Sửa: Hiển thị form thông tin
     if (!isOfflineMode) {
         document.getElementById('onlineOrderBtn').style.display = 'none'; // Sửa: Ẩn nút "BẮT ĐẦU ĐẶT MÓN"
+		document.querySelector('.bottom-nav').style.display = 'none';
     }
         updateCartModal();
         document.getElementById('cartModal').classList.add('show');
@@ -975,6 +980,7 @@ if (featuredBanner) {
         document.getElementById('orderForm').classList.remove('show');
         if (!isOfflineMode) {
             document.getElementById('onlineOrderBtn').style.display = 'block';
+			document.querySelector('.bottom-nav').style.display = 'flex';
         }
         document.body.style.overflow = 'auto';
     }
@@ -1430,14 +1436,14 @@ if (featuredBanner) {
         const popup = document.getElementById('customAlert');
         popup.classList.remove('show');
         document.body.style.overflow = 'auto';
-        if (currentOrderDetails) {
+        
             resetCart();
             currentOrderDetails = '';
-        }
+        
     }
 
     function confirmZaloOrder() {
-        const zaloUrl = `https://zalo.me/0909112233?text=${encodeURIComponent(currentOrderDetails)}`;
+        const zaloUrl = `https://zalo.me/0763137082?text=${encodeURIComponent(currentOrderDetails)}`;
         window.open(zaloUrl, '_blank');
         history.back(); 
     }
@@ -1460,7 +1466,7 @@ if (featuredBanner) {
     }
     
     function openZaloFromNav() {
-        window.open('https://zalo.me/0909112233', '_blank');
+        window.open('https://zalo.me/0763137082', '_blank');
     }
 
     function openAdminPopup() {
@@ -2338,7 +2344,7 @@ const statusClass = `status-${slugify(order.status || '')}`;
         top: 0;
         left: 0;
         right: 0;
-        bottom: 50px;
+        bottom: -1.5px;
         background: rgba(0, 0, 0, 0.5);
         z-index: 1000;
         display: none;
@@ -2395,7 +2401,7 @@ const statusClass = `status-${slugify(order.status || '')}`;
     .cart-item-image {
         width: 50px;
         height: 50px;
-        background: linear-gradient(135deg, #02a046, #02a046);
+        background: #fff;
         border-radius: 10px;
         display: flex;
         align-items: center;
@@ -3219,14 +3225,17 @@ const statusClass = `status-${slugify(order.status || '')}`;
         max-height: 40px;
     }
     .submit-btn {
-        padding: 10px 12px;
-        font-size: 15px;
-       background-color: #02a046;
-       color: #fff;
-        border-radius: 20px;
-        border: 1px solid #ddd;
-        font-weight: bold;
-    }
+    display: block;                  
+    margin: -2px auto;              
+    width: fit-content;              
+    padding: 8px 13px;               
+    font-size: 15px;
+    background-color: #02a046;
+    color: #fff;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    font-weight: bold;
+}
     .admin-shop-info-item {
         display: flex;
         align-items: baseline;
