@@ -1393,7 +1393,7 @@ if (featuredBanner) {
 
         // Thay đổi chữ nút Đóng cho gọn
         if (closeButton) {
-            closeButton.textContent = 'Đóng';
+            closeButton.textContent = 'Đóng lại';
             closeButton.style.flexGrow = ''; // Bỏ thuộc tính cũ nếu có
         }
 
@@ -2124,7 +2124,7 @@ const statusClass = `status-${slugify(order.status || '')}`;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
     }
     .product-card.disabled {
-        opacity: 0.6;
+        opacity: 1;
     }
     .product-image {
         position: relative;
@@ -2643,14 +2643,13 @@ const statusClass = `status-${slugify(order.status || '')}`;
         padding: 10px;
         border: none;
         border-radius: 20px;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 600;
         cursor: pointer;
     }
     .btn-primary {
         background: #02a046;
         color: white;
-		font-size: 16px;
     }
     .btn-secondary {
         background: #fff3cd;
