@@ -715,7 +715,7 @@ const PREDEFINED_NOTES = [
     // === PHẦN SỬA LỖI QUAN TRỌNG NHẤT ===
     // Khai báo rõ ràng 2 link cho 2 mục đích khác nhau
     const SCRIPT_URLS = {
-        onlineOrder: 'https://script.google.com/macros/s/AKfycbydXimgEdx-FZGYwVIDAFTBxfSKH4UpQOs4WT-aVU2NFiPnQNq4WFJISPHN8fM8HpPK8w/exec', // Link CŨ cho đơn Online
+        onlineOrder: 'https://script.google.com/macros/s/AKfycbziScXwq-i7gJFEC_m_YtdCA93_K1cCALftiYGetT8f3cX2Wa-S1z6QXD2RtovQqHUx/exec', // Link CŨ cho đơn Online
         offlineOrder: 'https://script.google.com/macros/s/AKfycbz0kwAmsEejvJRTdr8Wt5ya44kn7cfRrLSgI9bJZV36kuXO5uRpKHn9yKNEzR81Tjs3lA/exec', // Link MỚI cho đơn Offline
         menu: 'https://script.google.com/macros/s/AKfycbzIlA3lho8TgEeKeiZWLJPsc1kkmyRxSgNoNQTTQD-S8wyRJEffBp8X0PnM66I5f85UwA/exec',
         storeHours: 'https://script.google.com/macros/s/AKfycbyrHVX8PfGNgblZh6NfTbyOo2dRTdOhVyC_PMmZXS5MvuxyunC7FyqSs8qWcR5kL1VG/exec'
@@ -1393,7 +1393,7 @@ if (featuredBanner) {
 
         // Thay đổi chữ nút Đóng cho gọn
         if (closeButton) {
-            closeButton.textContent = 'Đóng lại';
+            closeButton.textContent = 'Đóng';
             closeButton.style.flexGrow = ''; // Bỏ thuộc tính cũ nếu có
         }
 
@@ -2643,13 +2643,14 @@ const statusClass = `status-${slugify(order.status || '')}`;
         padding: 10px;
         border: none;
         border-radius: 20px;
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 600;
         cursor: pointer;
     }
     .btn-primary {
         background: #02a046;
         color: white;
+		font-size: 16px;
     }
     .btn-secondary {
         background: #fff3cd;
