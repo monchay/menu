@@ -715,8 +715,8 @@ const PREDEFINED_NOTES = [
     // === PHẦN SỬA LỖI QUAN TRỌNG NHẤT ===
     // Khai báo rõ ràng 2 link cho 2 mục đích khác nhau
     const SCRIPT_URLS = {
-        onlineOrder: 'https://script.google.com/macros/s/AKfycbyDLOWSkcBd8kOLmeyDaxvTdeqXaUkPmBSkbtA6AF-tHNMMDfophRq32E1ez0yM96o5Aw/exec', // Link CŨ cho đơn Online
-        offlineOrder: 'https://script.google.com/macros/s/AKfycbxZuC1gXz0PwPQ1MX94wAOy-Vhasc0C7ABO8ppVPen3KG4kB84l9ubtbzTwimNKg4n38Q/exec', // Link MỚI cho đơn Offline
+        onlineOrder: 'https://script.google.com/macros/s/AKfycbydXimgEdx-FZGYwVIDAFTBxfSKH4UpQOs4WT-aVU2NFiPnQNq4WFJISPHN8fM8HpPK8w/exec', // Link CŨ cho đơn Online
+        offlineOrder: 'https://script.google.com/macros/s/AKfycbz0kwAmsEejvJRTdr8Wt5ya44kn7cfRrLSgI9bJZV36kuXO5uRpKHn9yKNEzR81Tjs3lA/exec', // Link MỚI cho đơn Offline
         menu: 'https://script.google.com/macros/s/AKfycbzIlA3lho8TgEeKeiZWLJPsc1kkmyRxSgNoNQTTQD-S8wyRJEffBp8X0PnM66I5f85UwA/exec',
         storeHours: 'https://script.google.com/macros/s/AKfycbyrHVX8PfGNgblZh6NfTbyOo2dRTdOhVyC_PMmZXS5MvuxyunC7FyqSs8qWcR5kL1VG/exec'
     };
@@ -1163,16 +1163,12 @@ if (featuredBanner) {
         };
         
         showCustomAlert('ĐẶT HÀNG THÀNH CÔNG !', orderData, 'online');
-		
-// THÊM DÒNG NÀY ĐỂ DEBUG
-    console.log('🚀 Sending order to:', SCRIPT_URLS.onlineOrder);
-    console.log('📦 Order data:', orderData);
-	
+
         fetch(SCRIPT_URLS.onlineOrder, {
             method: 'POST',
             mode: 'no-cors',
             headers: {
-                'Content-Type': 'text/plain',
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify(orderData)
         }).catch(error => {
