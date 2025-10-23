@@ -1165,15 +1165,20 @@ if (featuredBanner) {
         showCustomAlert('ĐẶT HÀNG THÀNH CÔNG !', orderData, 'online');
 
         fetch(SCRIPT_URLS.onlineOrder, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(orderData)
-        }).catch(error => {
-            console.error('Lỗi gửi đơn hàng ngầm:', error);
-        });
+    method: 'POST',
+    redirect: 'follow',
+    headers: {
+        'Content-Type': 'text/plain;charset=utf-8',
+    },
+    body: JSON.stringify(orderData)
+})
+.then(response => response.text())
+.then(data => {
+    console.log('Server response:', data);
+})
+.catch(error => {
+    console.error('Lỗi gửi đơn hàng:', error);
+});
     }
 
     async function submitOfflineOrder() {
