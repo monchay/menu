@@ -715,8 +715,8 @@ const PREDEFINED_NOTES = [
     // === PHẦN SỬA LỖI QUAN TRỌNG NHẤT ===
     // Khai báo rõ ràng 2 link cho 2 mục đích khác nhau
     const SCRIPT_URLS = {
-        onlineOrder: 'https://script.google.com/macros/s/AKfycbyWA5kgMgVK9D01mAOYKpMiOktVArMX5ERbJrI_Ckx5VsjuOOQOWtPMfHkDxJiyL-FLBA/exec', // Link CŨ cho đơn Online
-        offlineOrder: 'https://script.google.com/macros/s/AKfycbydgv2q3msSphrhEuiikodFpn4uRJRXQ1V8nHDCuFSks0Bq_wwloqTKe3R9Y-owxbFd/exec', // Link MỚI cho đơn Offline
+        onlineOrder: 'https://script.google.com/macros/s/AKfycbz3GK9HnSindDVCEU8I9MGbVQvUCfPEPrWPSnmOHnH-kWI3zJR3l_0q6-1zIZCmQxSmog/exec', // Link CŨ cho đơn Online
+        offlineOrder: 'https://script.google.com/macros/s/AKfycbxEa-vH-99MfjRSoBMxnk52Wa1TaVwJcrVnnTO69n_i35tMYJF-ZOOIdUrxVmt2l4-2zg/exec', // Link MỚI cho đơn Offline
         menu: 'https://script.google.com/macros/s/AKfycbzIlA3lho8TgEeKeiZWLJPsc1kkmyRxSgNoNQTTQD-S8wyRJEffBp8X0PnM66I5f85UwA/exec',
         storeHours: 'https://script.google.com/macros/s/AKfycbyrHVX8PfGNgblZh6NfTbyOo2dRTdOhVyC_PMmZXS5MvuxyunC7FyqSs8qWcR5kL1VG/exec'
     };
@@ -1130,56 +1130,51 @@ if (featuredBanner) {
     }
 
     async function submitOrder(event) {
-    event.preventDefault();
-    if (cartItems.length === 0) {
-        alert('Giỏ hàng trống!');
-        return;
-    }
-    const isNameValid = validateName();
-    const isPhoneValid = validatePhone();
-    const isAddressValid = validateAddress();
+        event.preventDefault();
+        if (cartItems.length === 0) {
+            alert('Giỏ hàng trống!');
+            return;
+        }
+        const isNameValid = validateName();
+        const isPhoneValid = validatePhone();
+        const isAddressValid = validateAddress();
 
-    if (!isNameValid || !isPhoneValid || !isAddressValid) {
-      alert('Vui lòng kiểm tra lại thông tin đã nhập!');
-      return;
-    }
-    
-    const formData = new FormData(event.target);
-    const customerName = formData.get('customerName');
-    const customerPhone = formData.get('customerPhone');
-    const ward = formData.get('ward');
-    const streetAddress = formData.get('address'); 
-    const note = formData.get('note');
-    const fullAddress = `${streetAddress}, ${ward}, Tp.HCM`;
+        if (!isNameValid || !isPhoneValid || !isAddressValid) {
+          alert('Vui lòng kiểm tra lại thông tin đã nhập!');
+          return;
+        }
+       const formData = new FormData(event.target);
+       const customerName = formData.get('customerName');
+       const customerPhone = formData.get('customerPhone');
+       const ward = formData.get('ward');
+       const streetAddress = formData.get('address'); 
+       const note = formData.get('note');
+        const fullAddress = `${streetAddress}, ${ward}, Tp.HCM`;
 
-    const orderData = {
-        action: 'submitOrder',
-        customerName: customerName,
-        customerPhone: customerPhone,
-        address: fullAddress,
-        note: note,
-        items: cartItems,
-        total: cartTotal,
-        timestamp: new Date().toISOString()
-    };
-    
-    // Hiển thị popup ngay lập tức
-    showCustomAlert('ĐẶT HÀNG THÀNH CÔNG !', orderData, 'online');
+        const orderData = {
+            action: 'submitOrder',
+            customerName: customerName,
+            customerPhone: customerPhone,
+            address: fullAddress,
+            note: note,
+            items: cartItems,
+            total: cartTotal,
+            timestamp: new Date().toISOString()
+        };
+        
+        showCustomAlert('ĐẶT HÀNG THÀNH CÔNG !', orderData, 'online');
 
-    // Gửi đơn hàng âm thầm
-    try {
-        await fetch(SCRIPT_URLS.onlineOrder, {
+        fetch(SCRIPT_URLS.onlineOrder, {
             method: 'POST',
+            mode: 'no-cors',
             headers: {
-                'Content-Type': 'text/plain;charset=utf-8',
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(orderData),
-            mode: 'no-cors'
+            body: JSON.stringify(orderData)
+        }).catch(error => {
+            console.error('Lỗi gửi đơn hàng ngầm:', error);
         });
-    } catch (error) {
-        console.error('Lỗi gửi đơn hàng (âm thầm, không ảnh hưởng UX):', error);
     }
-}
 
     async function submitOfflineOrder() {
         if (cartItems.length === 0) {
