@@ -715,10 +715,10 @@ const PREDEFINED_NOTES = [
     // === PHẦN SỬA LỖI QUAN TRỌNG NHẤT ===
     // Khai báo rõ ràng 2 link cho 2 mục đích khác nhau
     const SCRIPT_URLS = {
-        onlineOrder: 'https://script.google.com/macros/s/AKfycbz3GK9HnSindDVCEU8I9MGbVQvUCfPEPrWPSnmOHnH-kWI3zJR3l_0q6-1zIZCmQxSmog/exec', // Link CŨ cho đơn Online
         offlineOrder: 'https://script.google.com/macros/s/AKfycbxEa-vH-99MfjRSoBMxnk52Wa1TaVwJcrVnnTO69n_i35tMYJF-ZOOIdUrxVmt2l4-2zg/exec', // Link MỚI cho đơn Offline
-        menu: 'https://script.google.com/macros/s/AKfycbzIlA3lho8TgEeKeiZWLJPsc1kkmyRxSgNoNQTTQD-S8wyRJEffBp8X0PnM66I5f85UwA/exec',
-        storeHours: 'https://script.google.com/macros/s/AKfycbyrHVX8PfGNgblZh6NfTbyOo2dRTdOhVyC_PMmZXS5MvuxyunC7FyqSs8qWcR5kL1VG/exec'
+		onlineOrder: 'https://script.google.com/macros/s/AKfycbz3GK9HnSindDVCEU8I9MGbVQvUCfPEPrWPSnmOHnH-kWI3zJR3l_0q6-1zIZCmQxSmog/exec', // Link CŨ cho đơn Online
+        menu: 'https://script.google.com/macros/s/AKfycbz3GK9HnSindDVCEU8I9MGbVQvUCfPEPrWPSnmOHnH-kWI3zJR3l_0q6-1zIZCmQxSmog/exec',
+        storeHours: 'https://script.google.com/macros/s/AKfycbz3GK9HnSindDVCEU8I9MGbVQvUCfPEPrWPSnmOHnH-kWI3zJR3l_0q6-1zIZCmQxSmog/exec'
     };
     // =======================================
 
@@ -1711,23 +1711,31 @@ if (featuredBanner) {
     }
 
     async function saveStoreHours() {
-        const alertEl = document.getElementById('storeHoursAlert');
-        try {
-            showAdminAlert(alertEl, 'info', 'Đang lưu giờ hoạt động...');
-            const response = await fetch(STORE_HOURS_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'saveStoreHours', normalHours, breakPeriods }),
-            });
-            if (!response.ok) throw new Error(`Lỗi mạng: ${response.statusText}`);
-            const result = await response.json();
-            if (result.status !== 'success') throw new Error(result.message || 'Lỗi không xác định.');
-            showAdminAlert(alertEl, 'success', 'Lưu giờ hoạt động thành công!');
-            updateAdminShopInfoHours();
-            loadStoreHoursForCheck();
-        } catch (error) {
-            showAdminAlert(alertEl, 'error', `Lỗi lưu dữ liệu: ${error.message}.`);
-        }
+    const alertEl = document.getElementById('storeHoursAlert');
+    try {
+        showAdminAlert(alertEl, 'info', 'Đang lưu giờ hoạt động...');
+        
+        // Gửi đến STORE_HOURS_SCRIPT_URL thay vì MENU_SCRIPT_URL
+        const response = await fetch(STORE_HOURS_SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ 
+                action: 'saveStoreHours', 
+                normalHours, 
+                breakPeriods 
+            }),
+        });
+        
+        if (!response.ok) throw new Error(`Lỗi mạng: ${response.statusText}`);
+        const result = await response.json();
+        if (result.status !== 'success') throw new Error(result.message || 'Lỗi không xác định.');
+        
+        showAdminAlert(alertEl, 'success', 'Lưu giờ hoạt động thành công!');
+        updateAdminShopInfoHours();
+        loadStoreHoursForCheck();
+    } catch (error) {
+        showAdminAlert(alertEl, 'error', `Lỗi lưu dữ liệu: ${error.message}.`);
     }
+}
      
     function updateProductButtonsState() {
         document.getElementById('productsGrid').classList.toggle('store-closed', !isStoreOpen);
