@@ -1715,13 +1715,15 @@ if (featuredBanner) {
     try {
         showAdminAlert(alertEl, 'info', 'Đang lưu giờ hoạt động...');
         
-        // Gửi đến STORE_HOURS_SCRIPT_URL thay vì MENU_SCRIPT_URL
         const response = await fetch(STORE_HOURS_SCRIPT_URL, {
             method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8'
+            },
             body: JSON.stringify({ 
                 action: 'saveStoreHours', 
-                normalHours, 
-                breakPeriods 
+                normalHours: normalHours,
+                breakPeriods: breakPeriods
             }),
         });
         
