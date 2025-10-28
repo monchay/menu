@@ -146,7 +146,7 @@
 <body>
     <div class="header">
     <div class="header-logo-container">
-        <img src="https://i.postimg.cc/Sx3Vxx22/anhdaidien1.png" alt="Ảnh đại diện" class="logo-avatar">
+        <img src="https://i.postimg.cc/fLB34D9S/Anhdaidien.webp" alt="Ảnh đại diện" class="logo-avatar">
         
         <div class="header-title">QUÁN CHAY 6 LOAN</div>
     </div>
@@ -716,9 +716,9 @@ const PREDEFINED_NOTES = [
     // Khai báo rõ ràng 2 link cho 2 mục đích khác nhau
     const SCRIPT_URLS = {
         offlineOrder: 'https://script.google.com/macros/s/AKfycbwd8MpjpR7d9WBLNfCoAS8r8eLh77WyXI3i1btdGjsbbKKPja8CStNswl-K1a8biXHZ/exec', // Link MỚI cho đơn Offline
-		onlineOrder: 'https://script.google.com/macros/s/AKfycbzoTCbUyc_H-rWAqAYTLu6hL253ARw0x2MTM-XaL-aXoox6-51gC5OF7e50kufiFF7n7w/exec', // Link CŨ cho đơn Online
-        menu: 'https://script.google.com/macros/s/AKfycbzoTCbUyc_H-rWAqAYTLu6hL253ARw0x2MTM-XaL-aXoox6-51gC5OF7e50kufiFF7n7w/exec',
-        storeHours: 'https://script.google.com/macros/s/AKfycbzoTCbUyc_H-rWAqAYTLu6hL253ARw0x2MTM-XaL-aXoox6-51gC5OF7e50kufiFF7n7w/exec'
+		onlineOrder: 'https://script.google.com/macros/s/AKfycbzBye5ZHlTAqvZqDD5GiUTBIxIJ5BRh2Zmmqj3JKROitcDWfMpvkeZXHuQK5pp9F8SWMg/exec', // Link CŨ cho đơn Online
+        menu: 'https://script.google.com/macros/s/AKfycbzBye5ZHlTAqvZqDD5GiUTBIxIJ5BRh2Zmmqj3JKROitcDWfMpvkeZXHuQK5pp9F8SWMg/exec',
+        storeHours: 'https://script.google.com/macros/s/AKfycbzBye5ZHlTAqvZqDD5GiUTBIxIJ5BRh2Zmmqj3JKROitcDWfMpvkeZXHuQK5pp9F8SWMg/exec'
     };
     // =======================================
 
@@ -1428,27 +1428,36 @@ if (featuredBanner) {
     }
 
     document.getElementById('customAlert').classList.add('show');
-    document.body.style.overflow = 'hidden';
-    history.pushState({view: 'alert'}, 'Thông báo');
+document.body.style.overflow = 'hidden';
+// Đóng cart modal trước khi hiển thị popup
+closeCart();
+history.pushState({view: 'alert'}, 'Thông báo');
 }
 
     function closeCustomAlert() {
-        const popup = document.getElementById('customAlert');
-        popup.classList.remove('show');
-        document.body.style.overflow = 'auto';
-        
-            resetCart();
-            currentOrderDetails = '';
-        
+    const popup = document.getElementById('customAlert');
+    popup.classList.remove('show');
+    document.body.style.overflow = 'auto';
+    
+    // Đảm bảo cart modal cũng bị đóng
+    document.getElementById('cartModal').classList.remove('show');
+    document.getElementById('orderForm').classList.remove('show');
+    if (!isOfflineMode) {
+        document.getElementById('onlineOrderBtn').style.display = 'block';
+        document.querySelector('.bottom-nav').style.display = 'flex';
     }
+    
+    resetCart();
+    currentOrderDetails = '';
+}
 
     function confirmZaloOrder() {
         const zaloUrl = `https://zalo.me/0799025028?text=${encodeURIComponent(currentOrderDetails)}`;
         window.open(zaloUrl, '_blank');
-        history.back(); 
+       
     }
     
-    document.querySelector('.custom-alert-btn.btn-secondary').onclick = () => history.back();
+    document.querySelector('.custom-alert-btn.btn-secondary').onclick = closeCustomAlert;
 
 
     let deferredPrompt;
@@ -2077,23 +2086,28 @@ const statusClass = `status-${slugify(order.status || '')}`;
     }
 
     window.addEventListener('popstate', (event) => {
-        const isManagerViewVisible = document.getElementById('managementViews').style.display === 'block';
-        const isAdminPopupVisible = document.getElementById('adminPopup').style.display === 'flex';
-        const isCartVisible = document.getElementById('cartModal').classList.contains('show');
-        const isAlertVisible = document.getElementById('customAlert').classList.contains('show');
+    const isAlertVisible = document.getElementById('customAlert').classList.contains('show');
+    const isManagerViewVisible = document.getElementById('managementViews').style.display === 'block';
+    const isAdminPopupVisible = document.getElementById('adminPopup').style.display === 'flex';
+    const isCartVisible = document.getElementById('cartModal').classList.contains('show');
 
-        if (isManagerViewVisible) {
-            showAdminGrid();
-        } else if (isAdminPopupVisible) {
-            closeAdminPopup();
-        } else if (isCartVisible) {
-            closeCart();
-        } else if (isAlertVisible) {
-            closeCustomAlert();
-        } else {
-            history.pushState({view: 'home'}, 'Trang chủ', window.location.pathname);
-        }
-    });
+    if (isAlertVisible) {
+        // Chỉ đóng popup, không push history mới
+        const popup = document.getElementById('customAlert');
+        popup.classList.remove('show');
+        document.body.style.overflow = 'auto';
+        resetCart();
+        currentOrderDetails = '';
+    } else if (isManagerViewVisible) {
+        showAdminGrid();
+    } else if (isAdminPopupVisible) {
+        closeAdminPopup();
+    } else if (isCartVisible) {
+        closeCart();
+    } else {
+        history.pushState({view: 'home'}, 'Trang chủ', window.location.pathname);
+    }
+});
 
 </script>
 
