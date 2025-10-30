@@ -140,7 +140,7 @@
     font-weight: 600;
     cursor: pointer;
 }
-.btn-cancel-location {
+.btn-skip-location {
     background: #6c757d;
     color: white;
 }
@@ -879,7 +879,7 @@
         </div>
 
         <div class="location-buttons">
-            <button class="btn-cancel-location" onclick="closeLocationPicker()">❌ Hủy</button>
+            <button class="btn-skip-location" onclick="skipLocationPicker()">⏭️ Bỏ qua GPS</button>
             <button class="btn-confirm-location" id="confirmLocationBtn" disabled onclick="confirmLocation()">✓ Xác nhận vị trí</button>
         </div>
     </div>
@@ -1367,11 +1367,11 @@ if (featuredBanner) {
             timestamp: new Date().toISOString(),
             
             // === THÔNG TIN GPS ===
-            latitude: customerLocation.latitude,
-            longitude: customerLocation.longitude,
-            locationAccuracy: customerLocation.accuracy,
-            locationStatus: customerLocation.status,
-            manuallyAdjusted: customerLocation.manuallyAdjusted
+            latitude: customerLocation?.latitude || null,
+            longitude: customerLocation?.longitude || null,
+            locationAccuracy: customerLocation?.accuracy || null,
+            locationStatus: customerLocation?.status || 'Không có GPS',
+            manuallyAdjusted: customerLocation?.manuallyAdjusted || false
         };
         
         showCustomAlert('ĐẶT HÀNG THÀNH CÔNG !', orderData, 'online');
@@ -1388,39 +1388,33 @@ if (featuredBanner) {
         });
         
     } catch (error) {
-        console.error('Lỗi lấy vị trí:', error);
-        if (error.message === 'USER_CANCELLED') {
-            // Người dùng bấm Hủy - không làm gì
-            return;
-        }
-        // Nếu lỗi GPS, hỏi có muốn tiếp tục không
-        if (confirm('Không thể lấy vị trí GPS.\nBạn có muốn tiếp tục đặt hàng không?\n(Shipper sẽ gọi điện xác nhận địa chỉ)')) {
-            // Gửi đơn không có GPS
-            const formData = new FormData(event.target);
-            const orderData = {
-                action: 'submitOrder',
-                customerName: formData.get('customerName'),
-                customerPhone: formData.get('customerPhone'),
-                address: `${formData.get('address')}, ${formData.get('ward')}, Tp.HCM`,
-                note: formData.get('note'),
-                items: cartItems,
-                total: cartTotal,
-                timestamp: new Date().toISOString(),
-                latitude: null,
-                longitude: null,
-                locationAccuracy: null,
-                locationStatus: 'Không có GPS'
-            };
-            
-            showCustomAlert('ĐẶT HÀNG THÀNH CÔNG !', orderData, 'online');
-            
-            fetch(SCRIPT_URLS.onlineOrder, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(orderData)
-            }).catch(error => console.error('Lỗi:', error));
-        }
+        console.error('Lỗi:', error);
+        // Vẫn cho đặt hàng
+        const formData = new FormData(event.target);
+        const orderData = {
+            action: 'submitOrder',
+            customerName: formData.get('customerName'),
+            customerPhone: formData.get('customerPhone'),
+            address: `${formData.get('address')}, ${formData.get('ward')}, Tp.HCM`,
+            note: formData.get('note'),
+            items: cartItems,
+            total: cartTotal,
+            timestamp: new Date().toISOString(),
+            latitude: null,
+            longitude: null,
+            locationAccuracy: null,
+            locationStatus: 'Không có GPS',
+            manuallyAdjusted: false
+        };
+        
+        showCustomAlert('ĐẶT HÀNG THÀNH CÔNG !', orderData, 'online');
+        
+        fetch(SCRIPT_URLS.onlineOrder, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(orderData)
+        }).catch(err => console.error('Lỗi:', err));
     }
 }
 
@@ -2586,6 +2580,24 @@ function closeLocationPicker() {
     // Nếu bấm Hủy
     if (locationReject && !locationData) {
         locationReject(new Error('USER_CANCELLED'));
+    }
+}
+
+// === BỎ QUA GPS - Vẫn cho đặt hàng ===
+function skipLocationPicker() {
+    const popup = document.getElementById('locationPickerPopup');
+    popup.classList.remove('show');
+    document.body.style.overflow = 'auto';
+    
+    // Xóa bản đồ
+    if (locationMap) {
+        locationMap.remove();
+        locationMap = null;
+    }
+    
+    // Trả về null để đơn hàng vẫn được gửi
+    if (locationResolve) {
+        locationResolve(null);
     }
 }
 </script>
