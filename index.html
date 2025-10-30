@@ -8,6 +8,9 @@
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#02a046">
+	<!-- Leaflet Map Library - MIỄN PHÍ -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style id="critical-css">
         /* CSS QUAN TRỌNG - Tải ngay lập tức để hiển thị giao diện ban đầu */
 		        * {
@@ -20,6 +23,156 @@
             background: #f5f5f5;
             color: #333;
         }
+		/* === CSS CHO POPUP CHỌN VỊ TRÍ === */
+.location-picker-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 10001;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+.location-picker-popup.show {
+    display: flex;
+}
+.location-picker-content {
+    background: white;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.location-picker-header {
+    text-align: center;
+    margin-bottom: 12px;
+}
+.location-picker-header h3 {
+    color: #02a046;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+.location-info-box {
+    background: #e8f5e9;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    border-left: 4px solid #02a046;
+    font-size: 13px;
+    line-height: 1.6;
+}
+.location-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: #fff3cd;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+.location-status.success {
+    background: #d1f4e0;
+    color: #0a5f2e;
+}
+.location-status.error {
+    background: #f8d7da;
+    color: #721c24;
+}
+.location-spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #02a046;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    animation: spin 1s linear infinite;
+    flex-shrink: 0;
+}
+#locationMap {
+    width: 100%;
+    height: 300px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    border: 2px solid #e0e0e0;
+}
+.map-instructions {
+    background: #fff3cd;
+    padding: 8px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: #856404;
+}
+.coordinates-display {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    line-height: 1.6;
+}
+.coordinates-display strong {
+    color: #02a046;
+}
+.coordinates-display code {
+    background: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: monospace;
+}
+.location-buttons {
+    display: flex;
+    gap: 8px;
+}
+.location-buttons button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-cancel-location {
+    background: #6c757d;
+    color: white;
+}
+.btn-confirm-location {
+    background: #02a046;
+    color: white;
+}
+.btn-confirm-location:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.custom-marker {
+    background: #ff0000;
+    width: 20px;
+    height: 20px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    border: 3px solid white;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+}
+@media (max-width: 768px) {
+    .location-picker-popup {
+        padding: 0;
+    }
+    .location-picker-content {
+        max-height: 100vh;
+        border-radius: 0;
+    }
+    #locationMap {
+        height: 250px;
+    }
+}
         .header {
             background: white;
             padding: 0.5px 6px;
@@ -695,6 +848,43 @@
     </div>
 </div>
 
+<!-- POPUP CHỌN VỊ TRÍ GIAO HÀNG -->
+<div class="location-picker-popup" id="locationPickerPopup">
+    <div class="location-picker-content">
+        <div class="location-picker-header">
+            <h3>📍 Chọn Vị Trí Giao Hàng</h3>
+        </div>
+        
+        <div class="location-info-box">
+            <strong>🎯 Hướng dẫn:</strong><br>
+            1️⃣ Hệ thống tự động lấy vị trí của bạn<br>
+            2️⃣ Kéo ghim đỏ để điều chỉnh chính xác<br>
+            3️⃣ Bấm "Xác nhận vị trí" để hoàn tất
+        </div>
+
+        <div id="locationStatus" class="location-status">
+            <div class="location-spinner"></div>
+            <span id="locationStatusText">Đang lấy vị trí của bạn...</span>
+        </div>
+
+        <div id="locationMapContainer" style="display: none;">
+            <div class="map-instructions">
+                💡 <strong>Mẹo:</strong> Kéo ghim đỏ để chọn vị trí giao hàng chính xác
+            </div>
+            <div id="locationMap"></div>
+            <div id="coordinatesDisplay" class="coordinates-display">
+                <strong>📌 Tọa độ:</strong> <code id="currentCoords">-</code><br>
+                <span id="accuracyInfo"></span>
+            </div>
+        </div>
+
+        <div class="location-buttons">
+            <button class="btn-cancel-location" onclick="closeLocationPicker()">❌ Hủy</button>
+            <button class="btn-confirm-location" id="confirmLocationBtn" disabled onclick="confirmLocation()">✓ Xác nhận vị trí</button>
+        </div>
+    </div>
+</div>
+
 <script defer>
     const urlParams = new URLSearchParams(window.location.search);
 const isOfflineMode = urlParams.get('mode') === 'offline';
@@ -745,6 +935,14 @@ const PREDEFINED_NOTES = [
     let cartItems = [];
     let cartTotal = 0;
     let isStoreOpen = false; 
+	
+	// === BIẾN CHO LOCATION PICKER ===
+let locationMap = null;
+let locationMarker = null;
+let locationData = null;
+let locationResolve = null;
+let locationReject = null;
+let manuallyAdjusted = false;
     
     function validateName() {
         const nameInput = document.getElementById('customerName');
@@ -1145,73 +1343,85 @@ if (featuredBanner) {
         return;
     }
 
-    // === LẤY GPS KHÁCH HÀNG ===
-    let customerLocation = {
-        latitude: null,
-        longitude: null,
-        accuracy: null,
-        locationStatus: 'Không có'
-    };
+    try {
+        // === HIỆN POPUP CHỌN VỊ TRÍ ===
+        const customerLocation = await showLocationPicker();
+        
+        // Lấy thông tin form
+        const formData = new FormData(event.target);
+        const customerName = formData.get('customerName');
+        const customerPhone = formData.get('customerPhone');
+        const ward = formData.get('ward');
+        const streetAddress = formData.get('address');
+        const note = formData.get('note');
+        const fullAddress = `${streetAddress}, ${ward}, Tp.HCM`;
 
-    if (navigator.geolocation) {
-        try {
-            const position = await new Promise((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(resolve, reject, {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                });
-            });
+        const orderData = {
+            action: 'submitOrder',
+            customerName: customerName,
+            customerPhone: customerPhone,
+            address: fullAddress,
+            note: note,
+            items: cartItems,
+            total: cartTotal,
+            timestamp: new Date().toISOString(),
             
-            customerLocation.latitude = position.coords.latitude;
-            customerLocation.longitude = position.coords.longitude;
-            customerLocation.accuracy = Math.round(position.coords.accuracy);
-            customerLocation.locationStatus = 'Có GPS';
+            // === THÔNG TIN GPS ===
+            latitude: customerLocation.latitude,
+            longitude: customerLocation.longitude,
+            locationAccuracy: customerLocation.accuracy,
+            locationStatus: customerLocation.status,
+            manuallyAdjusted: customerLocation.manuallyAdjusted
+        };
+        
+        showCustomAlert('ĐẶT HÀNG THÀNH CÔNG !', orderData, 'online');
+
+        fetch(SCRIPT_URLS.onlineOrder, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(orderData)
+        }).catch(error => {
+            console.error('Lỗi gửi đơn hàng ngầm:', error);
+        });
+        
+    } catch (error) {
+        console.error('Lỗi lấy vị trí:', error);
+        if (error.message === 'USER_CANCELLED') {
+            // Người dùng bấm Hủy - không làm gì
+            return;
+        }
+        // Nếu lỗi GPS, hỏi có muốn tiếp tục không
+        if (confirm('Không thể lấy vị trí GPS.\nBạn có muốn tiếp tục đặt hàng không?\n(Shipper sẽ gọi điện xác nhận địa chỉ)')) {
+            // Gửi đơn không có GPS
+            const formData = new FormData(event.target);
+            const orderData = {
+                action: 'submitOrder',
+                customerName: formData.get('customerName'),
+                customerPhone: formData.get('customerPhone'),
+                address: `${formData.get('address')}, ${formData.get('ward')}, Tp.HCM`,
+                note: formData.get('note'),
+                items: cartItems,
+                total: cartTotal,
+                timestamp: new Date().toISOString(),
+                latitude: null,
+                longitude: null,
+                locationAccuracy: null,
+                locationStatus: 'Không có GPS'
+            };
             
-            console.log('✅ Đã lấy GPS:', customerLocation);
-        } catch (error) {
-            console.log('⚠️ Không lấy được GPS:', error.message);
-            customerLocation.locationStatus = error.code === 1 ? 'Từ chối GPS' : 'Không có';
+            showCustomAlert('ĐẶT HÀNG THÀNH CÔNG !', orderData, 'online');
+            
+            fetch(SCRIPT_URLS.onlineOrder, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(orderData)
+            }).catch(error => console.error('Lỗi:', error));
         }
     }
-
-    const formData = new FormData(event.target);
-    const customerName = formData.get('customerName');
-    const customerPhone = formData.get('customerPhone');
-    const ward = formData.get('ward');
-    const streetAddress = formData.get('address');
-    const note = formData.get('note');
-    const fullAddress = `${streetAddress}, ${ward}, Tp.HCM`;
-
-    const orderData = {
-        action: 'submitOrder',
-        customerName: customerName,
-        customerPhone: customerPhone,
-        address: fullAddress,
-        note: note,
-        items: cartItems,
-        total: cartTotal,
-        timestamp: new Date().toISOString(),
-        
-        // === THÔNG TIN GPS ===
-        latitude: customerLocation.latitude,
-        longitude: customerLocation.longitude,
-        locationAccuracy: customerLocation.accuracy,
-        locationStatus: customerLocation.locationStatus
-    };
-    
-    showCustomAlert('ĐẶT HÀNG THÀNH CÔNG !', orderData, 'online');
-
-    fetch(SCRIPT_URLS.onlineOrder, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData)
-    }).catch(error => {
-        console.error('Lỗi gửi đơn hàng ngầm:', error);
-    });
 }
 
     async function submitOfflineOrder() {
@@ -2176,6 +2386,208 @@ const statusClass = `status-${slugify(order.status || '')}`;
     }
 });
 
+// === HÀM HIỂN THỊ POPUP CHỌN VỊ TRÍ ===
+function showLocationPicker() {
+    return new Promise((resolve, reject) => {
+        locationResolve = resolve;
+        locationReject = reject;
+        manuallyAdjusted = false;
+        
+        const popup = document.getElementById('locationPickerPopup');
+        const statusBox = document.getElementById('locationStatus');
+        const statusText = document.getElementById('locationStatusText');
+        const mapContainer = document.getElementById('locationMapContainer');
+        const confirmBtn = document.getElementById('confirmLocationBtn');
+        
+        // Reset trạng thái
+        statusBox.className = 'location-status';
+        statusText.textContent = 'Đang lấy vị trí của bạn...';
+        mapContainer.style.display = 'none';
+        confirmBtn.disabled = true;
+        
+        // Hiện popup
+        popup.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        
+        // Bắt đầu lấy GPS
+        getGPSLocation();
+    });
+}
+
+// === HÀM LẤY GPS VÀ KHỞI TẠO BẢN ĐỒ ===
+async function getGPSLocation() {
+    const statusBox = document.getElementById('locationStatus');
+    const statusText = document.getElementById('locationStatusText');
+    const mapContainer = document.getElementById('locationMapContainer');
+    const confirmBtn = document.getElementById('confirmLocationBtn');
+
+    if (!navigator.geolocation) {
+        statusBox.className = 'location-status error';
+        statusText.textContent = '❌ Trình duyệt không hỗ trợ GPS';
+        return;
+    }
+
+    try {
+        const position = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 0
+            });
+        });
+
+        locationData = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            accuracy: Math.round(position.coords.accuracy),
+            status: 'Có GPS',
+            manuallyAdjusted: false
+        };
+
+        // Hiển thị thành công
+        statusBox.className = 'location-status success';
+        statusText.textContent = '✅ Đã lấy vị trí! Kiểm tra và điều chỉnh nếu cần.';
+        
+        // Hiện bản đồ
+        mapContainer.style.display = 'block';
+        confirmBtn.disabled = false;
+
+        // Khởi tạo Leaflet Map
+        initLeafletMap(locationData.latitude, locationData.longitude, locationData.accuracy);
+
+    } catch (error) {
+        statusBox.className = 'location-status error';
+        
+        let errorMsg = '❌ ';
+        if (error.code === 1) {
+            errorMsg += 'Bạn đã từ chối GPS. Vui lòng bật GPS và thử lại.';
+        } else if (error.code === 2) {
+            errorMsg += 'Không xác định được vị trí. Kiểm tra GPS và thử lại.';
+        } else if (error.code === 3) {
+            errorMsg += 'Hết thời gian chờ. Vui lòng thử lại.';
+        } else {
+            errorMsg += error.message;
+        }
+        
+        statusText.textContent = errorMsg;
+        
+        if (locationReject) {
+            locationReject(error);
+        }
+    }
+}
+
+// === HÀM KHỞI TẠO BẢN ĐỒ LEAFLET ===
+function initLeafletMap(lat, lng, accuracy) {
+    // Xóa bản đồ cũ nếu có
+    if (locationMap) {
+        locationMap.remove();
+        locationMap = null;
+    }
+
+    // Tạo bản đồ mới
+    locationMap = L.map('locationMap').setView([lat, lng], 17);
+
+    // Thêm tile layer từ OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap',
+        maxZoom: 19
+    }).addTo(locationMap);
+
+    // Tạo icon marker tùy chỉnh
+    const customIcon = L.divIcon({
+        className: 'custom-marker-wrapper',
+        html: '<div class="custom-marker"></div>',
+        iconSize: [20, 20],
+        iconAnchor: [10, 20]
+    });
+
+    // Thêm marker có thể kéo
+    locationMarker = L.marker([lat, lng], {
+        icon: customIcon,
+        draggable: true,
+        title: 'Kéo để điều chỉnh'
+    }).addTo(locationMap);
+
+    // Vẽ vòng tròn độ chính xác
+    if (accuracy && accuracy < 100) {
+        L.circle([lat, lng], {
+            radius: accuracy,
+            color: '#02a046',
+            fillColor: '#02a046',
+            fillOpacity: 0.1,
+            weight: 1
+        }).addTo(locationMap);
+    }
+
+    // Lắng nghe khi kéo marker
+    locationMarker.on('dragend', function() {
+        const pos = locationMarker.getLatLng();
+        locationData.latitude = pos.lat;
+        locationData.longitude = pos.lng;
+        locationData.manuallyAdjusted = true;
+        manuallyAdjusted = true;
+        updateCoordinatesDisplay();
+    });
+
+    // Popup cho marker
+    locationMarker.bindPopup('📍 Vị trí giao hàng<br><small>Kéo để điều chỉnh</small>').openPopup();
+
+    updateCoordinatesDisplay();
+}
+
+// === CẬP NHẬT HIỂN THỊ TỌA ĐỘ ===
+function updateCoordinatesDisplay() {
+    const coordsEl = document.getElementById('currentCoords');
+    const accuracyEl = document.getElementById('accuracyInfo');
+    
+    if (!locationData) return;
+    
+    coordsEl.textContent = `${locationData.latitude.toFixed(6)}, ${locationData.longitude.toFixed(6)}`;
+    
+    let infoHTML = `🎯 Độ chính xác: ~${locationData.accuracy}m`;
+    if (manuallyAdjusted) {
+        infoHTML += '<br><span style="color: #02a046; font-weight: 600;">✓ Đã điều chỉnh thủ công</span>';
+    }
+    
+    accuracyEl.innerHTML = infoHTML;
+}
+
+// === XÁC NHẬN VỊ TRÍ ===
+function confirmLocation() {
+    if (!locationData) {
+        alert('⚠️ Chưa có vị trí để xác nhận!');
+        return;
+    }
+    
+    locationData.manuallyAdjusted = manuallyAdjusted;
+    
+    // Đóng popup
+    closeLocationPicker();
+    
+    // Trả về dữ liệu
+    if (locationResolve) {
+        locationResolve(locationData);
+    }
+}
+
+// === ĐÓNG POPUP ===
+function closeLocationPicker() {
+    const popup = document.getElementById('locationPickerPopup');
+    popup.classList.remove('show');
+    document.body.style.overflow = 'auto';
+    
+    // Xóa bản đồ
+    if (locationMap) {
+        locationMap.remove();
+        locationMap = null;
+    }
+    
+    // Nếu bấm Hủy
+    if (locationReject && !locationData) {
+        locationReject(new Error('USER_CANCELLED'));
+    }
+}
 </script>
 
 <style id="non-critical-css">
