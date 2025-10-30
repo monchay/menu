@@ -716,9 +716,9 @@ const PREDEFINED_NOTES = [
     // Khai báo rõ ràng 2 link cho 2 mục đích khác nhau
     const SCRIPT_URLS = {
         offlineOrder: 'https://script.google.com/macros/s/AKfycbwd8MpjpR7d9WBLNfCoAS8r8eLh77WyXI3i1btdGjsbbKKPja8CStNswl-K1a8biXHZ/exec', // Link MỚI cho đơn Offline
-		onlineOrder: 'https://script.google.com/macros/s/AKfycbzBye5ZHlTAqvZqDD5GiUTBIxIJ5BRh2Zmmqj3JKROitcDWfMpvkeZXHuQK5pp9F8SWMg/exec', // Link CŨ cho đơn Online
-        menu: 'https://script.google.com/macros/s/AKfycbzBye5ZHlTAqvZqDD5GiUTBIxIJ5BRh2Zmmqj3JKROitcDWfMpvkeZXHuQK5pp9F8SWMg/exec',
-        storeHours: 'https://script.google.com/macros/s/AKfycbzBye5ZHlTAqvZqDD5GiUTBIxIJ5BRh2Zmmqj3JKROitcDWfMpvkeZXHuQK5pp9F8SWMg/exec'
+		onlineOrder: 'https://script.google.com/macros/s/AKfycbysyizyuo1qV0OWeQszEDyJpCEcckARXHcYRp2mTjVV23zGc6ru2_1zJzGDxi7xFu5oIw/exec', // Link CŨ cho đơn Online
+        menu: 'https://script.google.com/macros/s/AKfycbysyizyuo1qV0OWeQszEDyJpCEcckARXHcYRp2mTjVV23zGc6ru2_1zJzGDxi7xFu5oIw/exec',
+        storeHours: 'https://script.google.com/macros/s/AKfycbysyizyuo1qV0OWeQszEDyJpCEcckARXHcYRp2mTjVV23zGc6ru2_1zJzGDxi7xFu5oIw/exec'
     };
     // =======================================
 
@@ -1130,51 +1130,89 @@ if (featuredBanner) {
     }
 
     async function submitOrder(event) {
-        event.preventDefault();
-        if (cartItems.length === 0) {
-            alert('Giỏ hàng trống!');
-            return;
-        }
-        const isNameValid = validateName();
-        const isPhoneValid = validatePhone();
-        const isAddressValid = validateAddress();
-
-        if (!isNameValid || !isPhoneValid || !isAddressValid) {
-          alert('Vui lòng kiểm tra lại thông tin đã nhập!');
-          return;
-        }
-       const formData = new FormData(event.target);
-       const customerName = formData.get('customerName');
-       const customerPhone = formData.get('customerPhone');
-       const ward = formData.get('ward');
-       const streetAddress = formData.get('address'); 
-       const note = formData.get('note');
-        const fullAddress = `${streetAddress}, ${ward}, Tp.HCM`;
-
-        const orderData = {
-            action: 'submitOrder',
-            customerName: customerName,
-            customerPhone: customerPhone,
-            address: fullAddress,
-            note: note,
-            items: cartItems,
-            total: cartTotal,
-            timestamp: new Date().toISOString()
-        };
-        
-        showCustomAlert('ĐẶT HÀNG THÀNH CÔNG !', orderData, 'online');
-
-        fetch(SCRIPT_URLS.onlineOrder, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(orderData)
-        }).catch(error => {
-            console.error('Lỗi gửi đơn hàng ngầm:', error);
-        });
+    event.preventDefault();
+    if (cartItems.length === 0) {
+        alert('Giỏ hàng trống!');
+        return;
     }
+    
+    const isNameValid = validateName();
+    const isPhoneValid = validatePhone();
+    const isAddressValid = validateAddress();
+
+    if (!isNameValid || !isPhoneValid || !isAddressValid) {
+        alert('Vui lòng kiểm tra lại thông tin đã nhập!');
+        return;
+    }
+
+    // === LẤY GPS KHÁCH HÀNG ===
+    let customerLocation = {
+        latitude: null,
+        longitude: null,
+        accuracy: null,
+        locationStatus: 'Không có'
+    };
+
+    if (navigator.geolocation) {
+        try {
+            const position = await new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject, {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                });
+            });
+            
+            customerLocation.latitude = position.coords.latitude;
+            customerLocation.longitude = position.coords.longitude;
+            customerLocation.accuracy = Math.round(position.coords.accuracy);
+            customerLocation.locationStatus = 'Có GPS';
+            
+            console.log('✅ Đã lấy GPS:', customerLocation);
+        } catch (error) {
+            console.log('⚠️ Không lấy được GPS:', error.message);
+            customerLocation.locationStatus = error.code === 1 ? 'Từ chối GPS' : 'Không có';
+        }
+    }
+
+    const formData = new FormData(event.target);
+    const customerName = formData.get('customerName');
+    const customerPhone = formData.get('customerPhone');
+    const ward = formData.get('ward');
+    const streetAddress = formData.get('address');
+    const note = formData.get('note');
+    const fullAddress = `${streetAddress}, ${ward}, Tp.HCM`;
+
+    const orderData = {
+        action: 'submitOrder',
+        customerName: customerName,
+        customerPhone: customerPhone,
+        address: fullAddress,
+        note: note,
+        items: cartItems,
+        total: cartTotal,
+        timestamp: new Date().toISOString(),
+        
+        // === THÔNG TIN GPS ===
+        latitude: customerLocation.latitude,
+        longitude: customerLocation.longitude,
+        locationAccuracy: customerLocation.accuracy,
+        locationStatus: customerLocation.locationStatus
+    };
+    
+    showCustomAlert('ĐẶT HÀNG THÀNH CÔNG !', orderData, 'online');
+
+    fetch(SCRIPT_URLS.onlineOrder, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData)
+    }).catch(error => {
+        console.error('Lỗi gửi đơn hàng ngầm:', error);
+    });
+}
 
     async function submitOfflineOrder() {
         if (cartItems.length === 0) {
@@ -1902,34 +1940,63 @@ const statusClass = `status-${slugify(order.status || '')}`;
             const card = document.createElement('div');
             card.className = `order-card ${statusClass}`;
             const cleanPhone = (order.customerPhone || '').replace(/'/g, "");
-            card.innerHTML = `
-                <div class="order-header">
-                    <div class="order-customer-info">
-                        <div class="customer-name-phone">
-                            ${order.customerName} 
-                            <a href="tel:${cleanPhone}" style="font-weight: bold; color: #000; text-decoration: none;"> - ${cleanPhone}</a>
-                        </div>
-                        <div class="order-timestamp-customer"><small>${formattedTime} - ${formattedDate}</small></div>
-                    </div>
-                    <div class="order-total">${parseInt(order.total).toLocaleString('vi-VN')}</div>
-                </div>
-                <div class="order-details">
-                    <p><strong>Địa chỉ:</strong> ${order.address || ''}</p>
-                    ${order.note ? `<p><strong>Ghi chú:</strong> ${order.note}</p>` : ''}
-                    <div class="order-items">
-    <strong>Món đã đặt:</strong>
-    <div class="item-list">${(order.items || '').replace(/\n/g, '<br>')}</div>
-</div>
-                </div>
-                <div class="order-actions">
-                    <label for="status-${order.rowNumber}"><strong>Trạng thái:</strong></label>
-                    <select id="status-${order.rowNumber}" class="order-status-select" onchange="updateOrderStatus(${order.rowNumber}, this)">
-                        <option value="Chờ xác nhận" ${order.status === 'Chờ xác nhận' ? 'selected' : ''}>⏳ Chờ xác nhận</option>
-                        <option value="Đang giao" ${order.status === 'Đang giao' ? 'selected' : ''}>🚚 Đang giao</option>
-                        <option value="Hoàn thành" ${order.status === 'Hoàn thành' ? 'selected' : ''}>✅ Hoàn thành</option>
-                        <option value="Đã hủy" ${order.status === 'Đã hủy' ? 'selected' : ''}>❌ Đã hủy</option>
-                    </select>
-                </div>`;
+           card.innerHTML = `
+    <div class="order-header">
+        <div class="order-customer-info">
+            <div class="customer-name-phone">
+                ${order.customerName} 
+                <a href="tel:${cleanPhone}" style="font-weight: bold; color: #000; text-decoration: none;"> - ${cleanPhone}</a>
+            </div>
+            <div class="order-timestamp-customer"><small>${formattedTime} - ${formattedDate}</small></div>
+        </div>
+        <div class="order-total">${parseInt(order.total).toLocaleString('vi-VN')}đ</div>
+    </div>
+    <div class="order-details">
+        <p><strong>Địa chỉ:</strong> ${order.address || ''}</p>
+        
+        ${order.locationStatus === 'Có GPS' && order.latitude && order.longitude ? `
+            <p style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding: 10px; border-radius: 10px; margin: 8px 0; border-left: 4px solid #02a046; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <strong style="color: #02a046; font-size: 15px;">📍 Vị trí GPS của khách</strong><br>
+                <a href="https://maps.google.com/?q=${order.latitude},${order.longitude}" 
+                   target="_blank" 
+                   style="display: inline-block; margin: 6px 0; padding: 8px 12px; background: #02a046; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; box-shadow: 0 2px 4px rgba(2,160,70,0.3);">
+                    🗺️ Mở Google Maps để Book Grab
+                </a>
+                <br>
+                <small style="color: #555; font-size: 12px; display: block; margin-top: 4px;">
+                    📐 Tọa độ: <code style="background: #fff; padding: 2px 6px; border-radius: 3px; font-family: monospace;">${parseFloat(order.latitude).toFixed(6)}, ${parseFloat(order.longitude).toFixed(6)}</code><br>
+                    🎯 Độ chính xác: ~${order.locationAccuracy || '?'}m
+                </small>
+            </p>
+        ` : order.locationStatus === 'Từ chối GPS' ? `
+            <p style="background: #fff3cd; padding: 8px; border-radius: 8px; margin: 8px 0; border-left: 4px solid #ffc107;">
+                <strong style="color: #856404;">⚠️ Khách từ chối cấp quyền GPS</strong><br>
+                <small style="color: #856404; font-size: 12px;">Liên hệ khách để xác nhận địa chỉ chính xác</small>
+            </p>
+        ` : `
+            <p style="background: #f8d7da; padding: 8px; border-radius: 8px; margin: 8px 0; border-left: 4px solid #dc3545;">
+                <strong style="color: #721c24;">❌ Không có thông tin GPS</strong><br>
+                <small style="color: #721c24; font-size: 12px;">Trình duyệt không hỗ trợ hoặc khách đặt từ thiết bị cũ</small>
+            </p>
+        `}
+        
+        ${order.note ? `<p><strong>Ghi chú:</strong> ${order.note}</p>` : ''}
+        <div class="order-items">
+            <strong>Món đã đặt:</strong>
+            <div class="item-list">${(order.items || '').replace(/\n/g, '<br>')}</div>
+        </div>
+    </div>
+    
+    <div class="order-actions">
+        <label for="status-${order.rowNumber}"><strong>Trạng thái:</strong></label>
+        <select id="status-${order.rowNumber}" class="order-status-select" onchange="updateOrderStatus(${order.rowNumber}, this)">
+            <option value="Chờ xác nhận" ${order.status === 'Chờ xác nhận' ? 'selected' : ''}>⏳ Chờ xác nhận</option>
+            <option value="Đang giao" ${order.status === 'Đang giao' ? 'selected' : ''}>🚚 Đang giao</option>
+            <option value="Hoàn thành" ${order.status === 'Hoàn thành' ? 'selected' : ''}>✅ Hoàn thành</option>
+            <option value="Đã hủy" ${order.status === 'Đã hủy' ? 'selected' : ''}>❌ Đã hủy</option>
+        </select>
+    </div>
+`;
             container.appendChild(card);
         });
         if (showOnlyPending && deliveringOrders.length > 0) {
