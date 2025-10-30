@@ -869,7 +869,7 @@
 
         <div id="locationMapContainer" style="display: none;">
             <div class="map-instructions">
-                💡 <strong>Mẹo:</strong> Kéo ghim đỏ để chọn vị trí giao hàng chính xác
+                💡 <strong>Mẹo:</strong> Kéo Núm đỏ để chọn vị trí Nhận hàng chính xác
             </div>
             <div id="locationMap"></div>
             <div id="coordinatesDisplay" class="coordinates-display">
@@ -2531,7 +2531,7 @@ function initLeafletMap(lat, lng, accuracy) {
     });
 
     // Popup cho marker
-    locationMarker.bindPopup('📍 Vị trí giao hàng<br><small>Kéo để điều chỉnh</small>').openPopup();
+    locationMarker.bindPopup('📍 Hãy bấm nút "x"<br><small>Kéo núm Đỏ để chọn vị trí</small>').openPopup();
 
     updateCoordinatesDisplay();
 }
