@@ -1,8 +1,19 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+
+<!-- ==================== BẮT ĐẦU MÃ BẢO VẆ ==================== -->
+<script>
+(function(){'use strict';document.addEventListener('keydown',function(e){if(e.keyCode===123||e.ctrlKey&&e.shiftKey&&e.keyCode===73||e.ctrlKey&&e.shiftKey&&e.keyCode===74||e.ctrlKey&&e.keyCode===85||e.ctrlKey&&e.keyCode===83){e.preventDefault();return false;}});document.addEventListener('contextmenu',function(e){e.preventDefault();return false;});document.addEventListener('selectstart',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'){return true;}e.preventDefault();return false;});})();
+</script>
+
+<script>
+(function(){'use strict';let devOpen=false;const threshold=160;function detect(){const w=window.outerWidth-window.innerWidth>threshold;const h=window.outerHeight-window.innerHeight>threshold;if(w||h){if(!devOpen){devOpen=true;const ov=document.createElement('div');ov.innerHTML='<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:999999;display:flex;align-items:center;justify-content:center;color:white;font-family:Arial"><div style="text-align:center;padding:40px"><div style="font-size:80px;margin-bottom:20px">⚠️</div><h1 style="font-size:32px;margin-bottom:20px">DEVELOPER TOOLS DETECTED</h1><p style="font-size:18px;margin-bottom:30px">Vui lòng đóng Developer Tools để tiếp tục<br>Please close Developer Tools to continue</p><button onclick="location.reload()" style="background:#02a046;color:white;border:none;padding:15px 40px;font-size:18px;border-radius:8px;cursor:pointer;font-weight:600">Tải lại / Reload</button></div></div>';document.body.appendChild(ov);document.body.style.overflow='hidden';}}}setInterval(detect,500);})();
+</script>
+<!-- ==================== KẾT THÚC MÃ BẢO VẸ ==================== -->
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0...">
     <title>QUÁN CHAY 6 LOAN</title>
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,10 +25,30 @@
     <style id="critical-css">
         /* CSS QUAN TRỌNG - Tải ngay lập tức để hiển thị giao diện ban đầu */
 		        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Bảo vệ chống copy */
+body {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+input, textarea, [contenteditable="true"] {
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+}
+img {
+    -webkit-user-drag: none;
+    -moz-user-drag: none;
+    user-drag: none;
+    pointer-events: none;
+}
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #f5f5f5;
@@ -904,12 +935,20 @@ const PREDEFINED_NOTES = [
 
     // === PHẦN SỬA LỖI QUAN TRỌNG NHẤT ===
     // Khai báo rõ ràng 2 link cho 2 mục đích khác nhau
-    const SCRIPT_URLS = {
-        offlineOrder: 'https://script.google.com/macros/s/AKfycbzlj2nXCZU_ddLxwKbgeU2Y7-YKYoGfWzjxE64D1sHAQ2V5DVPo8L-aJpk6C8lPt8jrlQ/exec', // Link MỚI cho đơn Offline
-		onlineOrder: 'https://script.google.com/macros/s/AKfycbysyizyuo1qV0OWeQszEDyJpCEcckARXHcYRp2mTjVV23zGc6ru2_1zJzGDxi7xFu5oIw/exec', // Link CŨ cho đơn Online
-        menu: 'https://script.google.com/macros/s/AKfycbysyizyuo1qV0OWeQszEDyJpCEcckARXHcYRp2mTjVV23zGc6ru2_1zJzGDxi7xFu5oIw/exec',
-        storeHours: 'https://script.google.com/macros/s/AKfycbysyizyuo1qV0OWeQszEDyJpCEcckARXHcYRp2mTjVV23zGc6ru2_1zJzGDxi7xFu5oIw/exec'
-    };
+    // Mã hóa URLs
+const _s1 = 'https://script.google.com/macros/s/AKfycbzlj2nXCZU_ddLxwKbgeU2Y7-YKYoGfWzjxE64D1sHAQ2V5DVPo8L-aJpk6C8lPt8jrlQ/exec';
+const _s2 = atob('aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J5c3lpenl1bzFxVjBPV2VRc3pFRHlKcENFY2NrQVJYSGNZUnAybVRqVlYyM3pHYzZydTJfMXpKekdEeGk3eEZ1NW9Jdy9leGVj');
+
+const SCRIPT_URLS = {
+    offlineOrder: _s1,
+    onlineOrder: _s2,
+    menu: _s2,
+    storeHours: _s2
+};
+
+// Xóa biến tạm để không ai lấy được
+window._s1 = null;
+window._s2 = null;
     // =======================================
 
     const MENU_SCRIPT_URL = SCRIPT_URLS.menu;
@@ -1267,11 +1306,11 @@ if (featuredBanner) {
             </div>
             ` : ''}
         </div>`; // Dấu ngoặc và dấu chấm phẩy này đã bị thiếu
-    }); // Vòng lặp forEach kết thúc ở đây
+    }); 
 
 				
         modalBody.innerHTML = modalHTML;
-        modalTotalPrice.textContent = cartTotal.toLocaleString('vi-VN') ;
+        modalTotalPrice.textContent = cartTotal.toLocaleString('vi-VN');
     }
     function increaseQuantityInModal(index) {
         cartItems[index].quantity++;
@@ -3278,7 +3317,7 @@ function skipLocationPicker() {
         display: flex;
         justify-content: space-between;
         margin-bottom: 3px;
-        padding-bottom: ;
+        padding-bottom: 0px;
         border-bottom: 1px dashed #eee;
         font-size: 16px;
     }
