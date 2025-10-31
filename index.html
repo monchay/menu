@@ -905,7 +905,7 @@ const PREDEFINED_NOTES = [
     // === PHẦN SỬA LỖI QUAN TRỌNG NHẤT ===
     // Khai báo rõ ràng 2 link cho 2 mục đích khác nhau
     const SCRIPT_URLS = {
-        offlineOrder: 'https://script.google.com/macros/s/AKfycbw5hAWSlvVl8g3nGYEsG3fB1uVft9mQfSABuhINlzfXsoL48YmyKMzdW6C5RWk8jVux8g/exec', // Link MỚI cho đơn Offline
+        offlineOrder: 'https://script.google.com/macros/s/AKfycbzlj2nXCZU_ddLxwKbgeU2Y7-YKYoGfWzjxE64D1sHAQ2V5DVPo8L-aJpk6C8lPt8jrlQ/exec', // Link MỚI cho đơn Offline
 		onlineOrder: 'https://script.google.com/macros/s/AKfycbysyizyuo1qV0OWeQszEDyJpCEcckARXHcYRp2mTjVV23zGc6ru2_1zJzGDxi7xFu5oIw/exec', // Link CŨ cho đơn Online
         menu: 'https://script.google.com/macros/s/AKfycbysyizyuo1qV0OWeQszEDyJpCEcckARXHcYRp2mTjVV23zGc6ru2_1zJzGDxi7xFu5oIw/exec',
         storeHours: 'https://script.google.com/macros/s/AKfycbysyizyuo1qV0OWeQszEDyJpCEcckARXHcYRp2mTjVV23zGc6ru2_1zJzGDxi7xFu5oIw/exec'
@@ -993,6 +993,7 @@ let manuallyAdjusted = false;
     document.addEventListener('DOMContentLoaded', function() {
         // TẢI MENU ĐỘNG CHO CẢ ONLINE VÀ OFFLINE
         loadMenuFromSheets(); 
+		loadPasswordFromServer();
                
         const nameInput = document.getElementById('customerName');
         const phoneInput = document.getElementById('customerPhone');
@@ -1567,10 +1568,14 @@ if (featuredBanner) {
     let currentOrderDetails = '';
     let adminMenuData = [];
     const ADMIN_CONFIG = {
-        MENU_SCRIPT_URL: SCRIPT_URLS.menu,
-        ADMIN_PASS: "0000",
-        FETCH_TIMEOUT_MS: 30000
-    };
+    MENU_SCRIPT_URL: SCRIPT_URLS.menu,
+    ADMIN_PASS: "0000", // Mật khẩu mặc định
+    FETCH_TIMEOUT_MS: 30000
+};
+
+// Biến toàn cục lưu mật khẩu hiện tại
+let currentAdminPassword = "0000";
+
 	function slugify(text) {
     text = text.toString().toLowerCase().trim();
     const from = "àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ";
@@ -1760,10 +1765,25 @@ history.pushState({view: 'alert'}, 'Thông báo');
     }
     
     function changePassword() {
-        promptForAdminPassword(() => {
-            showNewPasswordPrompt();
-        });
+    promptForAdminPassword(() => {
+        showNewPasswordPrompt();
+    });
+}
+
+// Hàm tải mật khẩu từ server
+async function loadPasswordFromServer() {
+    try {
+        const response = await fetch(`${SCRIPT_URLS.menu}?action=getPassword`);
+        if (!response.ok) throw new Error('Không tải được mật khẩu');
+        const data = await response.json();
+        if (data.password) {
+            currentAdminPassword = data.password;
+            ADMIN_CONFIG.ADMIN_PASS = data.password;
+        }
+    } catch (error) {
+        console.warn('Lỗi tải mật khẩu, dùng mật khẩu mặc định:', error);
     }
+}
 
     function showAdminAlert(el, type, msg) {
         if (!el) return;
@@ -2281,7 +2301,7 @@ const statusClass = `status-${slugify(order.status || '')}`;
         const inputs = document.querySelectorAll('#passwordInputs .password-digit');
         const enteredPassword = Array.from(inputs).map(i => i.value).join('');
 
-        if (enteredPassword === ADMIN_CONFIG.ADMIN_PASS) {
+        if (enteredPassword === currentAdminPassword) {
             if (typeof afterPasswordSuccessCallback === 'function') {
                 afterPasswordSuccessCallback();
             }
@@ -2314,27 +2334,50 @@ const statusClass = `status-${slugify(order.status || '')}`;
         document.getElementById('newPasswordPrompt').style.display = 'none';
     }
 
-    function saveNewPassword() {
-        const inputs = document.querySelectorAll('#newPasswordInputs .password-digit');
-        const newPassword = Array.from(inputs).map(i => i.value).join('');
+    async function saveNewPassword() {
+    const inputs = document.querySelectorAll('#newPasswordInputs .password-digit');
+    const newPassword = Array.from(inputs).map(i => i.value).join('');
 
-        if (newPassword.length === 4) {
-            ADMIN_CONFIG.ADMIN_PASS = newPassword;
-            alert('Đã đổi mật khẩu thành công!');
-            closeNewPasswordPrompt();
-        } else {
-            const promptEl = document.getElementById('newPasswordPrompt');
-            promptEl.classList.add('shake');
-            inputs.forEach(input => {
-                input.value = '';
-                input.style.borderColor = '#dc3545';
+    if (newPassword.length === 4) {
+        // Gửi mật khẩu mới lên server
+        try {
+            const response = await fetch(SCRIPT_URLS.menu, {
+                method: 'POST',
+                headers: {'Content-Type': 'text/plain'},
+                body: JSON.stringify({ 
+                    action: 'updatePassword', 
+                    password: newPassword 
+                })
             });
-            setTimeout(() => {
-                promptEl.classList.remove('shake');
-                inputs.forEach(input => input.style.borderColor = '#ccc');
-                if (inputs.length > 0) inputs[0].focus();
-            }, 500);
+            
+            const result = await response.json();
+            
+            if (result.status === 'success') {
+                currentAdminPassword = newPassword;
+                ADMIN_CONFIG.ADMIN_PASS = newPassword;
+                alert('✅ Đã đổi mật khẩu thành công!');
+                closeNewPasswordPrompt();
+            } else {
+                throw new Error(result.message || 'Lỗi không xác định');
+            }
+        } catch (error) {
+            alert('❌ Lỗi đổi mật khẩu: ' + error.message);
+            console.error('Lỗi saveNewPassword:', error);
         }
+    } else {
+        const promptEl = document.getElementById('newPasswordPrompt');
+        promptEl.classList.add('shake');
+        inputs.forEach(input => {
+            input.value = '';
+            input.style.borderColor = '#dc3545';
+        });
+        setTimeout(() => {
+            promptEl.classList.remove('shake');
+            inputs.forEach(input => input.style.borderColor = '#ccc');
+            if (inputs.length > 0) inputs[0].focus();
+        }, 500);
+    }
+       
     }
 
     function setupNewPasswordInputListeners() {
