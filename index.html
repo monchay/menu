@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 
-<!-- ==================== BẮT ĐẦU MÃ BẢO VẆ ==================== -->
+<!-- ==================== BẮT ĐẦU MÃ BẢO VỆ ==================== -->
 <script>
 (function(){'use strict';document.addEventListener('keydown',function(e){if(e.keyCode===123||e.ctrlKey&&e.shiftKey&&e.keyCode===73||e.ctrlKey&&e.shiftKey&&e.keyCode===74||e.ctrlKey&&e.keyCode===85||e.ctrlKey&&e.keyCode===83){e.preventDefault();return false;}});document.addEventListener('contextmenu',function(e){e.preventDefault();return false;});document.addEventListener('selectstart',function(e){if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'){return true;}e.preventDefault();return false;});})();
 </script>
@@ -19,311 +19,10 @@
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#02a046">
-	<!-- Leaflet Map Library - MIỄN PHÍ -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+	
+
     <style id="critical-css">
-        /* CSS QUAN TRỌNG - Tải ngay lập tức để hiển thị giao diện ban đầu */
-		        * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Bảo vệ chống copy */
-body {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-input, textarea, [contenteditable="true"] {
-    -webkit-user-select: text !important;
-    -moz-user-select: text !important;
-    -ms-user-select: text !important;
-    user-select: text !important;
-}
-img {
-    -webkit-user-drag: none;
-    -moz-user-drag: none;
-    user-drag: none;
-    pointer-events: none;
-}
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f5;
-            color: #333;
-        }
-		/* === CSS CHO POPUP CHỌN VỊ TRÍ === */
-.location-picker-popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.85);
-    z-index: 10001;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-}
-.location-picker-popup.show {
-    display: flex;
-}
-.location-picker-content {
-    background: white;
-    border-radius: 15px;
-    width: 100%;
-    max-width: 500px;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-.location-picker-header {
-    text-align: center;
-    margin-bottom: 12px;
-}
-.location-picker-header h3 {
-    color: #02a046;
-    font-size: 18px;
-    margin-bottom: 8px;
-}
-.location-info-box {
-    background: #e8f5e9;
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 12px;
-    border-left: 4px solid #02a046;
-    font-size: 13px;
-    line-height: 1.6;
-}
-.location-status {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    background: #fff3cd;
-    border-radius: 8px;
-    margin-bottom: 12px;
-    font-size: 13px;
-}
-.location-status.success {
-    background: #d1f4e0;
-    color: #0a5f2e;
-}
-.location-status.error {
-    background: #f8d7da;
-    color: #721c24;
-}
-.location-spinner {
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #02a046;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    animation: spin 1s linear infinite;
-    flex-shrink: 0;
-}
-#locationMap {
-    width: 100%;
-    height: 300px;
-    border-radius: 10px;
-    margin-bottom: 12px;
-    border: 2px solid #e0e0e0;
-}
-.map-instructions {
-    background: #fff3cd;
-    padding: 8px;
-    border-radius: 6px;
-    margin-bottom: 10px;
-    font-size: 12px;
-    color: #856404;
-}
-.coordinates-display {
-    background: #f8f9fa;
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 12px;
-    font-size: 12px;
-    line-height: 1.6;
-}
-.coordinates-display strong {
-    color: #02a046;
-}
-.coordinates-display code {
-    background: #e9ecef;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-family: monospace;
-}
-.location-buttons {
-    display: flex;
-    gap: 8px;
-}
-.location-buttons button {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-}
-.btn-skip-location {
-    background: #6c757d;
-    color: white;
-}
-.btn-confirm-location {
-    background: #02a046;
-    color: white;
-}
-.btn-confirm-location:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-.custom-marker {
-    background: #ff0000;
-    width: 20px;
-    height: 20px;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
-    border: 3px solid white;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.4);
-}
-@media (max-width: 768px) {
-    .location-picker-popup {
-        padding: 0;
-    }
-    .location-picker-content {
-        max-height: 100vh;
-        border-radius: 0;
-    }
-    #locationMap {
-        height: 250px;
-    }
-}
-        .header {
-            background: white;
-            padding: 0.5px 6px;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .header-title {
-            font-size: 26px;
-            font-weight: 600;
-            color: #02a046;
-            padding: 4px;
-        }
-        .category-tabs {
-            display: flex;
-            background: white;
-            padding: 5px;
-            gap: 8px;
-            overflow-x: auto;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        .category-tab {
-            padding: 7px;
-            border-radius: 12px;
-            border: none;
-            font-size: 15px;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.3s;
-            background: #f0f0f0;
-            color: #666;
-        }
-        .category-tab.active {
-            background: #02a046;
-            color: white;
-            font-weight: 600;
-        }
-        .featured-banner {
-            background: linear-gradient(135deg, #02a046, #02a046);
-            margin: 10px 6px;
-            border-radius: 15px;
-            padding: 10px;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-        .featured-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .featured-subtitle {
-            font-size: 16px;
-        }
-        .products-container {
-            padding: 6px 10px 80px;
-        }
-        .products-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-bottom: 40px;
-        }
-        .product-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .product-name {
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 3px;
-            color: #333;
-            line-height: 1.0;
-            height: 24px;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-        }
-        .product-price {
-            font-size: 22px;
-            font-weight: bold;
-            color: #02a046;
-        }
-		
-		/* --- BẮT ĐẦU CSS CHO HEADER LOGO MỚI --- */
-
-.header-logo-container {
-    display: flex;          /* Sắp xếp logo và chữ nằm ngang */
-    align-items: center;    /* Căn giữa theo chiều dọc */
-    height: 40px;
-    padding-left: 6px;      /* Thêm một chút khoảng trống bên lề trái */
-}
-
-.logo-avatar {
-    height: 100%;           /* Cao 45px */
-    width: auto;
-    aspect-ratio: 1 / 1;    /* Giữ hình vuông */
-    object-fit: cover;
-    border-radius: 7px;
-    flex-shrink: 0;         /* Quan trọng: Ngăn ảnh bị co lại khi không đủ chỗ */
-}
-
-/* Chỉnh lại class .header-title để hoạt động tốt khi nằm cạnh logo */
-.header-title {
-    font-size: 26px;        /* Có thể điều chỉnh kích thước chữ ở đây */
-    font-weight: 600;
-    color: #02a046;
-    margin-left: 12px;      /* Khoảng cách giữa ảnh đại diện và chữ */
-    padding: 0;             /* Bỏ đi padding cũ để căn chỉnh tốt hơn */
-}
-
-/* --- KẾT THÚC CSS CHO HEADER LOGO MỚI --- */
+        *{margin:0;padding:0;box-sizing:border-box}body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;color:#333}[contenteditable=true],input,textarea{-webkit-user-select:text!important;-moz-user-select:text!important;-ms-user-select:text!important;user-select:text!important}img{-webkit-user-drag:none;-moz-user-drag:none;user-drag:none;pointer-events:none}.location-picker-popup{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:10001;display:none;align-items:center;justify-content:center;padding:10px}.location-picker-popup.show{display:flex}.location-picker-content{background:#fff;border-radius:15px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;padding:15px;box-shadow:0 10px 30px rgba(0,0,0,.3)}.location-info-box,.location-status{padding:10px;border-radius:8px;font-size:13px;margin-bottom:12px}.location-picker-header{text-align:center;margin-bottom:12px}.location-picker-header h3{color:#02a046;font-size:18px;margin-bottom:8px}.location-info-box{background:#e8f5e9;border-left:4px solid #02a046;line-height:1.6}.location-status{display:flex;align-items:center;gap:10px;background:#fff3cd}.location-status.success{background:#d1f4e0;color:#0a5f2e}.location-status.error{background:#f8d7da;color:#721c24}.location-spinner{border:3px solid #f3f3f3;border-top:3px solid #02a046;border-radius:50%;width:18px;height:18px;animation:1s linear infinite spin;flex-shrink:0}#locationMap{width:100%;height:300px;border-radius:10px;margin-bottom:12px;border:2px solid #e0e0e0}.map-instructions{background:#fff3cd;padding:8px;border-radius:6px;margin-bottom:10px;font-size:12px;color:#856404}.coordinates-display{background:#f8f9fa;padding:10px;border-radius:8px;margin-bottom:12px;font-size:12px;line-height:1.6}.coordinates-display strong{color:#02a046}.coordinates-display code{background:#e9ecef;padding:2px 6px;border-radius:3px;font-family:monospace}.location-buttons{display:flex;gap:8px}.location-buttons button{flex:1;padding:10px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}.btn-skip-location{background:#6c757d;color:#fff}.btn-confirm-location{background:#02a046;color:#fff}.btn-confirm-location:disabled{opacity:.5;cursor:not-allowed}.custom-marker{background:red;width:20px;height:20px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 3px 6px rgba(0,0,0,.4)}.category-tabs,.header{display:flex;background:#fff;border-bottom:1px solid #e0e0e0}@media (max-width:768px){.location-picker-popup{padding:0}.location-picker-content{max-height:100vh;border-radius:0}#locationMap{height:250px}}.header{padding:.5px 6px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}.category-tabs{padding:5px;gap:8px;overflow-x:auto}.category-tab{padding:7px;border-radius:12px;border:none;font-size:15px;cursor:pointer;white-space:nowrap;transition:.3s;background:#f0f0f0;color:#666}.featured-banner,.product-card{border-radius:15px;overflow:hidden}.category-tab.active{background:#02a046;color:#fff;font-weight:600}.featured-banner{background:linear-gradient(135deg,#02a046,#02a046);margin:10px 6px;padding:10px;color:#fff;position:relative}.featured-title{font-size:24px;font-weight:700;margin-bottom:5px}.featured-subtitle{font-size:16px}.products-container{padding:6px 10px 80px}.products-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:40px}.product-card{background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.1);transition:transform .3s,box-shadow .3s}.product-name{font-size:22px;font-weight:600;margin-bottom:3px;color:#333;line-height:1;height:24px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.product-price{font-size:22px;font-weight:700;color:#02a046}.header-logo-container{display:flex;align-items:center;height:40px;padding-left:6px}.logo-avatar{height:100%;width:auto;aspect-ratio:1/1;object-fit:cover;border-radius:7px;flex-shrink:0}.header-title{font-size:26px;font-weight:600;color:#02a046;margin-left:12px;padding:0}
 
     </style>
 </head>
@@ -2218,28 +1917,27 @@ const statusClass = `status-${slugify(order.status || '')}`;
         <p><strong>Địa chỉ:</strong> ${order.address || ''}</p>
         
         ${order.locationStatus === 'Có GPS' && order.latitude && order.longitude ? `
-            <p style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding: 10px; border-radius: 10px; margin: 8px 0; border-left: 4px solid #02a046; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <strong style="color: #02a046; font-size: 15px;">📍 Vị trí GPS của khách</strong><br>
+            <p style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding: 2px; border-radius: 10px; margin: 2px 0;  box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                
                 <a href="https://maps.google.com/?q=${order.latitude},${order.longitude}" 
                    target="_blank" 
-                   style="display: inline-block; margin: 6px 0; padding: 8px 12px; background: #02a046; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; box-shadow: 0 2px 4px rgba(2,160,70,0.3);">
-                    🗺️ Mở Google Maps để Book Grab
+                   style="display: inline-block; margin: 2px 0; padding: 5px 5px; background: #02a046; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 13px; box-shadow: 0 2px 4px rgba(2,160,70,0.3);">
+                    🗺️ Mở Google Maps để lấy Vị trí
                 </a>
                 <br>
-                <small style="color: #555; font-size: 12px; display: block; margin-top: 4px;">
-                    📐 Tọa độ: <code style="background: #fff; padding: 2px 6px; border-radius: 3px; font-family: monospace;">${parseFloat(order.latitude).toFixed(6)}, ${parseFloat(order.longitude).toFixed(6)}</code><br>
+                <small style="color: #555; font-size: 13px; display: block; margin-top: 1px;">
                     🎯 Độ chính xác: ~${order.locationAccuracy || '?'}m
                 </small>
             </p>
         ` : order.locationStatus === 'Từ chối GPS' ? `
-            <p style="background: #fff3cd; padding: 8px; border-radius: 8px; margin: 8px 0; border-left: 4px solid #ffc107;">
+            <p style="background: #fff3cd; padding: 2px; border-radius: 8px; margin: 5px 0; ">
                 <strong style="color: #856404;">⚠️ Khách từ chối cấp quyền GPS</strong><br>
-                <small style="color: #856404; font-size: 12px;">Liên hệ khách để xác nhận địa chỉ chính xác</small>
+                <small style="color: #856404; font-size: 13px;">Liên hệ khách để xác nhận địa chỉ chính xác</small>
             </p>
         ` : `
-            <p style="background: #f8d7da; padding: 8px; border-radius: 8px; margin: 8px 0; border-left: 4px solid #dc3545;">
-                <strong style="color: #721c24;">❌ Không có thông tin GPS</strong><br>
-                <small style="color: #721c24; font-size: 12px;">Trình duyệt không hỗ trợ hoặc khách đặt từ thiết bị cũ</small>
+            <p style="background: #f8d7da; padding: 2px; border-radius: 8px; margin: 5px 0; ">
+                <strong style="color: #721c24;">❌ Không có thông tin Vị trí</strong><br>
+                <small style="color: #721c24; font-size: 13px;">Nhờ Khách hàng chia sẻ Vị trí</small>
             </p>
         `}
         
@@ -2463,7 +2161,8 @@ const statusClass = `status-${slugify(order.status || '')}`;
 });
 
 // === HÀM HIỂN THỊ POPUP CHỌN VỊ TRÍ ===
-function showLocationPicker() {
+async function showLocationPicker() {
+  await loadLeafletMap(); 
     return new Promise((resolve, reject) => {
         locationResolve = resolve;
         locationReject = reject;
@@ -4151,5 +3850,23 @@ function skipLocationPicker() {
         }
     }
 </style>
+<script>
+// Lazy load Leaflet khi người dùng click "Chọn vị trí"
+function loadLeafletMap() {
+  if (window.L) return Promise.resolve(); // Đã load rồi
+  
+  return new Promise((resolve) => {
+    const css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(css);
+    
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    script.onload = resolve;
+    document.head.appendChild(script);
+  });
+}
+</script>
 </body>
 </html>
